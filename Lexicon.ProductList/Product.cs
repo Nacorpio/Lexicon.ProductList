@@ -25,6 +25,7 @@ public class Product(int id, string category, string name, decimal price)
     /// </summary>
 	public decimal Price { get; private set; } = price;
 
+
     /// <summary>
     /// Updates the price of the product.
     /// </summary>
@@ -39,7 +40,6 @@ public class Product(int id, string category, string name, decimal price)
 
 		Price = newPrice;
 	}
-
 
     /// <summary>
     /// Updates the name of the product.
