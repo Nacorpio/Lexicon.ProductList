@@ -79,6 +79,32 @@ public static class ConsoleHelper
     /// <remarks>
     /// This method is typically used to give the user time to read messages before returning to the main menu.
     /// </remarks>
+	public static void DrawStatistics(ProductStatistics statistics)
+	{
+		Console.WriteLine("========= STATISTICS =========");
+		Console.WriteLine();
+
+		Console.WriteLine("Most Expensive Product:");
+		Console.WriteLine(FormatProductPrice(statistics.MostExpensive));
+		Console.WriteLine();
+
+		Console.WriteLine("Cheapest Product:");
+		Console.WriteLine(FormatProductPrice(statistics.Cheapest));
+		Console.WriteLine();
+
+		Console.WriteLine("Average Price:");
+		Console.WriteLine(statistics.AveragePrice.ToString("C", cultureInfo));
+		Console.WriteLine();
+
+		Console.WriteLine("Products per Category:");
+
+		foreach (var (category, count) in statistics.ProductsPerCategory)
+			Console.WriteLine($"{category}: {count}");
+	}
+
+	private static string FormatProductPrice(Product product) =>
+		$"{product.Name} - {product.Price.ToString("C", cultureInfo)}";
+
 	public static void PauseBeforeReturn()
 	{
 		Console.WriteLine();

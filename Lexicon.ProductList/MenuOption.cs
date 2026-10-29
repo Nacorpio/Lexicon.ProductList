@@ -9,7 +9,8 @@ public enum MenuOption
 	View = 2,
 	Search = 3,
 	Delete = 4,
-	Save = 5,
-	Load = 6,
-	Exit = 7
+	Statistics = 5,
+	Save = 6,
+	Load = 7,
+	Exit = 8
 }

@@ -111,6 +111,24 @@ public static class MenuHandlers
 		return Result.Success($"Product `{product.Name}` deleted successfully.");
 	}
 
+	/// <summary>
+	/// Handles showing statistics: the most expensive and cheapest product, the average price and the number of products per category.
+	/// </summary>
+	/// <param name="productManager">The product manager containing the products to summarise.</param>
+	/// <returns>A <see cref="Result"/> indicating the success or failure of the operation.</returns>
+	public static Result Statistics(ProductManager productManager)
+	{
+		var statistics = productManager.GetStatistics();
+
+		if (statistics is null)
+			return Result.Error("No products available.");
+
+		ConsoleHelper.DrawStatistics(statistics);
+		ConsoleHelper.PauseBeforeReturn();
+
+		return Result.Success();
+	}
+
     /// <summary>
     /// Handles saving the current list of products to storage.
     /// </summary>

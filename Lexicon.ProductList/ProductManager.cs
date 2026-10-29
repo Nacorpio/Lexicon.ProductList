@@ -56,12 +56,37 @@ public sealed class ProductManager
 	/// </summary>
 	public decimal CalculateTotal() => _products.Sum(p => p.Price);
 
-    /// <summary>
-    /// Determines whether the specified product exists in the <see cref="ProductManager"/>.	
-    /// </summary>
-    /// <param name="product">The product to check for existence.</param>
-    /// <returns><c>true</c> if the product exists; otherwise, <c>false</c>.</returns>
-    public bool Contains(Product product)
+	/// <summary>
+	/// Calculates summary figures for the products currently contained in the <see cref="ProductManager"/>.
+	/// </summary>
+	/// <returns>The statistics, or <c>null</c> if there are no products.</returns>
+	public ProductStatistics? GetStatistics()
+	{
+		if (_products.Count == 0)
+			return null;
+
+		return new ProductStatistics(
+			_products.OrderByDescending(p => p.Price).ThenBy(p => p.Name).First(),
+			_products.OrderBy(p => p.Price).ThenBy(p => p.Name).First(),
+			_products.Average(p => p.Price),
+			CountByCategory());
+	}
+
+	/// <summary>
+	/// Counts how many products each category contains.
+	/// </summary>
+	/// <returns>A read-only list of tuples containing the category name and the count of products in that category.</returns>
+	public IReadOnlyList<(string Category, int Count)> CountByCategory() => [.. _products
+		.GroupBy(p => p.Category, StringComparer.OrdinalIgnoreCase)
+		.Select(g => (Category: g.Key, Count: g.Count()))
+		.OrderBy(t => t.Category, StringComparer.OrdinalIgnoreCase)];
+
+	/// <summary>
+	/// Determines whether the specified product exists in the <see cref="ProductManager"/>.	
+	/// </summary>
+	/// <param name="product">The product to check for existence.</param>
+	/// <returns><c>true</c> if the product exists; otherwise, <c>false</c>.</returns>
+	public bool Contains(Product product)
 	{
 		return _products.Any(p => p.Id == product.Id);
 	}
