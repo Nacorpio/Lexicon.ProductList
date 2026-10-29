@@ -13,7 +13,7 @@ public class Product(int id, string category, string name, decimal price)
     /// <summary>
     /// Gets the category of the product.
     /// </summary>
-	public string Category { get; } = category;
+	public string Category { get; private set; } = category;
 
     /// <summary>
     /// Gets the name of the product.
@@ -25,6 +25,21 @@ public class Product(int id, string category, string name, decimal price)
     /// </summary>
 	public decimal Price { get; private set; } = price;
 
+
+	/// <summary>
+	/// Updates the category of the product.
+	/// </summary>
+	/// <param name="newCategory">The new category to set for the product.</param>
+	/// <exception cref="ArgumentException">Thrown when <paramref name="newCategory"/> is null or empty.</exception>
+	public void UpdateCategory(string newCategory)
+	{
+		if (string.IsNullOrWhiteSpace(newCategory))
+		{
+			throw new ArgumentException("New category cannot be null or empty.", nameof(newCategory));
+		}
+
+		Category = newCategory;
+	}
 
     /// <summary>
     /// Updates the price of the product.

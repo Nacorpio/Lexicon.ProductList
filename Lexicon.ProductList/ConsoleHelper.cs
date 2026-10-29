@@ -245,11 +245,17 @@ public static class ConsoleHelper
     public static bool TryHandleInput<T>(
         string message, string fieldName,
         Func<string, Result<T>> convertor,
-        [MaybeNullWhen(false)] out T value)
+        [MaybeNullWhen(false)] out T value,
+        string? defaultValue = null)
     {
         while (true)
         {
-            Console.Write($"{message} (`q` to exit): ");
+            Console.Write($"{message} (");
+
+            if (defaultValue != null)
+                Console.Write($"default: `{defaultValue}` | ");
+
+            Console.Write($"`q` to exit): ");
 
             var input = Console.ReadLine()?.Trim();
 
@@ -259,7 +265,10 @@ public static class ConsoleHelper
                 return false;
             }
 
-            var result = input.Length == 0
+			if (input.Length is 0 && defaultValue is not null)
+				input = defaultValue;
+
+			var result = input.Length is 0
                 ? Result<T>.Error($"ERROR: The {fieldName.ToLower()} cannot be empty.")
                 : convertor(input);
 

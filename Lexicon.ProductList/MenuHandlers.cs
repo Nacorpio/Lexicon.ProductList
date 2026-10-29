@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Lexicon.ProductList;
 
 /// <summary>
@@ -109,6 +111,66 @@ public static class MenuHandlers
 		productManager.Remove(product);
 
 		return Result.Success($"Product `{product.Name}` deleted successfully.");
+	}
+
+	/// <summary>
+	/// Handles editing a product's category, name and price. Pressing Enter at a prompt keeps the current value.
+	/// </summary>
+	/// <param name="productManager">The product manager containing the products to edit.</param>
+	/// <returns>A <see cref="Result"/> indicating the success or failure of the operation.</returns>
+	public static Result Edit(ProductManager productManager)
+	{
+		var productEntries = productManager.Entries;
+
+		if (productEntries.Count == 0)
+			return Result.Error("No products available.");
+
+		ConsoleHelper.DrawProductTable("Edit Product", productEntries);
+		Console.WriteLine();
+
+		if (!ConsoleHelper.TryHandleInput("Enter the ID of the product to edit", "product ID",
+			ConsoleHelper.ConvertIdInput, out var id))
+		{
+			return Result.Success();
+		}
+
+		var product = productManager.GetProductById(id);
+
+		if (product is null)
+			return Result.Error($"No product with ID {id} was found.");
+
+		Console.WriteLine();
+		Console.WriteLine("Press Enter at a prompt to keep the current value.");
+
+		if (!ConsoleHelper.TryHandleInput("Enter the new category", "product category",
+			ConsoleHelper.ConvertTextInput, out var category, product.Category))
+		{
+			return Result.Success();
+		}
+
+		if (!ConsoleHelper.TryHandleInput("Enter the new name", "product name",
+			ConsoleHelper.ConvertTextInput, out var name, product.Name))
+		{
+			return Result.Success();
+		}
+
+		if (!ConsoleHelper.TryHandleInput("Enter the new price", "product price",
+			ConsoleHelper.ConvertPriceInput, out var price, product.Price.ToString(CultureInfo.InvariantCulture)))
+		{
+			return Result.Success();
+		}
+
+		if (category == product.Category && name == product.Name && price == product.Price)
+			return Result.Success("No changes made.");
+
+		if (!ConsoleHelper.Confirm($"Save changes to product {product.Id}?"))
+			return Result.Success("Edit cancelled.");
+
+		product.UpdateCategory(category);
+		product.UpdateName(name);
+		product.UpdatePrice(price);
+
+		return Result.Success($"Product `{product.Name}` updated successfully.");
 	}
 
 	/// <summary>

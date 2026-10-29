@@ -30,6 +30,7 @@ while (true)
 		MenuOption.Add => MenuHandlers.Add(productManager),
 		MenuOption.View => MenuHandlers.View(productManager),
 		MenuOption.Search => MenuHandlers.Search(productManager),
+		MenuOption.Edit => MenuHandlers.Edit(productManager),
 		MenuOption.Delete => MenuHandlers.Delete(productManager),
 		MenuOption.Statistics => MenuHandlers.Statistics(productManager),
 		MenuOption.Save => MenuHandlers.Save(productManager),
@@ -44,11 +45,12 @@ static void DrawMenu()
 	Console.WriteLine("1. Add Product");
 	Console.WriteLine("2. View Products");
 	Console.WriteLine("3. Search Products");
-	Console.WriteLine("4. Delete Product");
-	Console.WriteLine("5. Statistics");
-	Console.WriteLine("6. Save Products");
-	Console.WriteLine("7. Load Products");
-	Console.WriteLine("8. Exit");
+	Console.WriteLine("4. Edit Product");
+	Console.WriteLine("5. Delete Product");
+	Console.WriteLine("6. Statistics");
+	Console.WriteLine("7. Save Products");
+	Console.WriteLine("8. Load Products");
+	Console.WriteLine("9. Exit");
 
 	Console.WriteLine();
 }
