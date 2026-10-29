@@ -144,6 +144,7 @@ static void DrawProductTable(string title, IReadOnlyList<Product> productEntries
 	Console.Write($" {"Price".PadRight(priceMinWidth)} |");
 
 	Console.WriteLine();
+
 	DrawLine(totalMinWidth);
 
 	foreach (var product in productEntries.OrderBy(p => p.Price).ThenBy(p => p.Name))
@@ -157,6 +158,7 @@ static void DrawProductTable(string title, IReadOnlyList<Product> productEntries
 	}
 
 	DrawLine(totalMinWidth);
+
 	Console.WriteLine();
 
 	Console.WriteLine($"TOTAL PRICE: {productEntries.Sum(p => p.Price).ToString("C", culture)}");
