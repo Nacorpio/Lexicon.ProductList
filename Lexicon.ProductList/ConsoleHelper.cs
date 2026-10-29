@@ -7,18 +7,32 @@ public static class ConsoleHelper
 {
 	private static readonly CultureInfo cultureInfo = CultureInfo.GetCultureInfo("sv-SE");
 
+    /// <summary>
+    /// Draws a horizontal line of the specified width.
+    /// </summary>
+    /// <param name="totalMinWidth">The total width of the line.</param>
 	public static void DrawLine(int totalMinWidth)
 	{
 		Console.WriteLine(new string('-', totalMinWidth));
 	}
 
-	private static void DrawProductFooter(IReadOnlyList<Product> productEntries)
+    /// <summary>
+    /// Draws the footer for the product table, showing total and average prices.
+    /// </summary>
+    /// <param name="productEntries">The list of products to calculate totals for.</param>
+    private static void DrawProductFooter(IReadOnlyList<Product> productEntries)
 	{
 		Console.WriteLine($"TOTAL PRICE: {productEntries.Sum(p => p.Price).ToString("C", cultureInfo)}");
 		Console.WriteLine($"AVERAGE PRICE: {productEntries.Average(p => p.Price).ToString("C", cultureInfo)}");
 	}
 
-	public static void DrawProductTable(string title, IReadOnlyList<Product> productEntries, ConsoleColor? rowColor = null)
+    /// <summary>
+	/// Draws a table of products with the specified title and optional row color.
+    /// </summary>
+    /// <param name="title">The title of the product table.</param>
+    /// <param name="productEntries">The list of products to display.</param>
+    /// <param name="rowColor">The optional color for the table rows.</param>
+    public static void DrawProductTable(string title, IReadOnlyList<Product> productEntries, ConsoleColor? rowColor = null)
 	{
 		var idMinWidth = Math.Max("Id".Length, productEntries.Max(p => p.Id.ToString().Length)) + 3;
 		var nameMinWidth = Math.Max("Name".Length, productEntries.Max(p => p.Name.Length)) + 3;
@@ -57,13 +71,27 @@ public static class ConsoleHelper
 		Console.WriteLine();
 
 		DrawProductFooter(productEntries);
+	}
 
+    /// <summary>
+    /// Pauses the console and waits for the user to press any key before returning.
+    /// </summary>
+    /// <remarks>
+    /// This method is typically used to give the user time to read messages before returning to the main menu.
+    /// </remarks>
+	public static void PauseBeforeReturn()
+	{
 		Console.WriteLine();
 		Console.WriteLine("Press any key to go back");
 
 		Console.ReadLine();
 	}
 
+    /// <summary>
+    /// Prints text to the console with an optional color.
+    /// </summary>
+    /// <param name="text">The text to print.</param>
+    /// <param name="color">The optional color for the text.</param>
 	public static void Print(string text, ConsoleColor? color = null)
 	{
 		if (color is { } foreground)
@@ -75,12 +103,21 @@ public static class ConsoleHelper
 			Console.ResetColor();
 	}
 
+    /// <summary>
+    /// Prints a line of text to the console with an optional color.
+    /// </summary>
+    /// <param name="text">The text to print.</param>
+    /// <param name="color">The optional color for the text.</param>
 	public static void PrintLine(string text, ConsoleColor? color = null)
 	{
 		Print(text, color);
 		Console.WriteLine();
 	}
 
+    /// <summary>
+    /// Prints the result message to the console with color indicating success or error.
+    /// </summary>
+    /// <param name="result">The result to print.</param>
 	public static void PrintResult(Result result)
 	{
 		if (result.IsSuccess)
@@ -92,23 +129,72 @@ public static class ConsoleHelper
 		PrintLine(result.Message, ConsoleColor.Red);
 	}
 
-	public static Result<string> ConvertTextInput(string input) => Result<string>.Success(input);
+	/// <summary>
+	/// Asks a yes/no question and returns whether the user confirmed.
+	/// </summary>
+	/// <param name="question">The question to show, without the answer hint.</param>
+	/// <returns><c>true</c> if the user confirmed; otherwise, <c>false</c>.</returns>
+	public static bool Confirm(string question)
+	{
+		Print($"{question} (y/n): ");
 
-    public static Result<int> ConvertMenuOptionInput(string input)
+		var input = Console.ReadLine();
+
+		if (string.IsNullOrWhiteSpace(input))
+			return false;
+
+		input = input.Trim().ToLowerInvariant();
+
+		return input is "y" or "yes";
+	}
+
+    /// <summary>
+    /// Converts the input string to a text result.
+    /// </summary>
+    /// <param name="input">The input string to convert.</param>
+    /// <returns>A <see cref="Result{T}"/> containing the converted text.</returns>
+    public static Result<string> ConvertTextInput(string input) => Result<string>.Success(input);
+
+    /// <summary>
+    /// Converts the input string to an ID result.
+    /// </summary>
+    /// <param name="input">The input string to convert.</param>
+    /// <returns>A <see cref="Result{T}"/> containing the converted ID.</returns>
+    public static Result<int> ConvertIdInput(string input)
+	{
+		if (!int.TryParse(input, out var id))
+			return Result<int>.Error("ERROR: Invalid ID. Please enter a number.");
+
+		return Result<int>.Success(id);
+	}
+
+    /// <summary>
+    /// Converts the input string to a menu option result.
+    /// </summary>
+    /// <param name="input">The input string to convert.</param>
+    /// <returns>A <see cref="Result{T}"/> containing the converted menu option.</returns>
+    public static Result<MenuOption> ConvertMenuOptionInput(string input)
     {
-        if (!int.TryParse(input, out var result))
+        if (!int.TryParse(input, out var number))
         {
-            return Result<int>.Error("ERROR: Invalid menu option. Please enter a number.");
+            return Result<MenuOption>.Error("ERROR: Invalid menu option. Please enter a number.");
         }
 
-        if (result < 1 || result > 4)
+        var option = (MenuOption)number;
+
+        if (!Enum.IsDefined(option))
         {
-            return Result<int>.Error("ERROR: Menu option out of range. Please select a valid option.");
+            return Result<MenuOption>.Error("ERROR: Menu option out of range. Please select a valid option.");
         }
 
-        return Result<int>.Success(result);
+        return Result<MenuOption>.Success(option);
     }
 
+    /// <summary>
+    /// Converts the input string to a price result.
+    /// </summary>
+    /// <param name="input">The input string to convert.</param>
+    /// <returns>A <see cref="Result{T}"/> containing the converted price.</returns>
     public static Result<decimal> ConvertPriceInput(string input)
     {
         const NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
@@ -122,6 +208,14 @@ public static class ConsoleHelper
         return Result<decimal>.Success(price);
     }
 
+    /// <summary>
+    /// Handles user input for a specific field, using a conversion function to validate and convert the input.
+    /// </summary>
+    /// <param name="message">The message to display to the user.</param>
+    /// <param name="fieldName">The name of the field being input.</param>
+    /// <param name="convertor">The function to convert and validate the input.</param>
+    /// <param name="value">The output value if the input is valid.</param>
+    /// <returns>True if the input was successfully handled and converted; otherwise, false.</returns>
     public static bool TryHandleInput<T>(
         string message, string fieldName,
         Func<string, Result<T>> convertor,

@@ -23,12 +23,24 @@ public sealed class ProductManager
 	/// <summary>
 	/// Gets the identifier that will be assigned to the next added product.
 	/// </summary>
-	private int NextId => InitialId + Count;
+	private int NextId => _products.Count == 0 ? InitialId : _products.Max(p => p.Id) + 1;
 
 	/// <summary>
 	/// Gets a collection of the product entries in the <see cref="ProductManager"/>.
 	/// </summary>
 	public IReadOnlyList<Product> Entries => [.. _products];
+
+	/// <summary>
+	/// Replaces all products in the <see cref="ProductManager"/> with the specified products.
+	/// </summary>
+	/// <param name="products">The products that become the new contents.</param>
+	public void ReplaceAll(IEnumerable<Product> products)
+	{
+		var replacement = products.ToList();
+
+		_products.Clear();
+		_products.AddRange(replacement);
+	}
 
 	public Product AddProduct(string category, string name, decimal price)
 	{
