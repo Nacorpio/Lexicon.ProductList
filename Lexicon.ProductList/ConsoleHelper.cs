@@ -73,12 +73,7 @@ public static class ConsoleHelper
 		DrawProductFooter(productEntries);
 	}
 
-    /// <summary>
-    /// Pauses the console and waits for the user to press any key before returning.
-    /// </summary>
-    /// <remarks>
-    /// This method is typically used to give the user time to read messages before returning to the main menu.
-    /// </remarks>
+   
 	public static void DrawStatistics(ProductStatistics statistics)
 	{
 		Console.WriteLine("========= STATISTICS =========");
@@ -105,6 +100,13 @@ public static class ConsoleHelper
 	private static string FormatProductPrice(Product product) =>
 		$"{product.Name} - {product.Price.ToString("C", cultureInfo)}";
 
+
+	/// <summary>
+	/// Pauses the console and waits for the user to press any key before returning.
+	/// </summary>
+	/// <remarks>
+	/// This method is typically used to give the user time to read messages before returning to the main menu.
+	/// </remarks>
 	public static void PauseBeforeReturn()
 	{
 		Console.WriteLine();
